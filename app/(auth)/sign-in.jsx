@@ -1,7 +1,7 @@
-import { View, Text } from 'react-native'
+import { View, Text,Image, ScrollView  } from 'react-native'
 import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView } from 'react-native-gesture-handler'
+
 
 import {images} from "../../constants"
 
@@ -80,15 +80,14 @@ const SignIn = () => {
       isLoading={isSubmitting}
       />
 
-      <View clasName="justify-center pt-5  flex-row gap-2">
-
-        <Text className="text-lg text-gay-100 font-pregular">
-          Don´t have an account
-        </Text>
-          
-        <Link href="/sign-up" className="text-lg font-psemibold text-secondary">
-        Sign Up
-        </Link>
+      <View className="justify-center pt-5 flex-row gap-2">
+            <Text className="text-lg text-gray-100 font-pregular">
+              Don't have account?
+            </Text>
+  
+      <Link href="/sign-up" className="text-lg font-psemibold text-secondary">
+      Sign Up
+      </Link>
 
       </View>
       </View>
