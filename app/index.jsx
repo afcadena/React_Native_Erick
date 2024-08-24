@@ -1,30 +1,31 @@
 import React from 'react';
 import { Text, View, Image, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Linking, ImageBackground } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { router } from 'expo-router'; // Importa router para redirección
 
 export default function App() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
-        {/* Background Image */}
-        <ImageBackground source={require('../assets/wall_page-0001.jpg')} style={styles.backgroundImage}>
-          
+      {/* Background Image */}
+      <ImageBackground source={require('../assets/wall_page-0001.jpg')} style={styles.backgroundImage}>
+        
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.logo}>Cyber Copias<Text style={styles.logoDot}>.</Text></Text>
-            <TouchableOpacity onPress={() => alert('Login')}>
+            <TouchableOpacity onPress={() => router.push('/sign-in')}>
               <Text style={styles.navItem}>Iniciar Sesión</Text>
             </TouchableOpacity>
           </View>
 
           {/* Home Section */}
           <View style={styles.home}>
-            <Text style={styles.homeTitle}>Papelería</Text>
+            <Text style={styles.homeTitle}>CyberCopias</Text>
             <Text style={styles.homeSubtitle}>Gran variedad de materiales</Text>
             <Text style={styles.homeDescription}>
               Somos tu destino para materiales de papelería de calidad. Ofrecemos una amplia gama de productos, atención personalizada y un compromiso con la sostenibilidad. Tu papelería de confianza.
             </Text>
-            <TouchableOpacity style={styles.btn} onPress={() => alert('Ver productos')}>
+            <TouchableOpacity style={styles.btn} onPress={() => router.push('/sign-in')}>
               <Text style={styles.btnText}>Ver ahora</Text>
             </TouchableOpacity>
           </View>
@@ -84,8 +85,9 @@ export default function App() {
             </View>
           </View>
 
-        </ImageBackground>
-      </ScrollView>
+        </ScrollView>
+
+      </ImageBackground>
       <StatusBar backgroundColor="#161622" style="light" />
     </SafeAreaView>
   );
@@ -102,11 +104,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    paddingHorizontal: 20,
+    flex: 1,
+  },
+  scrollContainer: {
+    flexGrow: 1,
   },
   backgroundImage: {
-    flex: 1,
-    resizeMode: 'cover',  // Asegura que la imagen de fondo ocupe todo el espacio
+    flex: 1,  // Para que la imagen ocupe toda la pantalla
+    resizeMode: 'cover',
   },
   header: {
     flexDirection: 'row',

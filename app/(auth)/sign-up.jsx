@@ -1,101 +1,124 @@
-import { View, Text, Alert, Image, ScrollView } from 'react-native';
 import React, { useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { images } from "../../constants";
-import FormField from '../../components/FormField';
-import CustomButton from "../../components/CustomButton";
-import { Link, useRouter } from 'expo-router';
-import { createUser } from '../../lib/appwrite';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ImageBackground } from 'react-native';
+import { useRouter } from 'expo-router';
+import { createUser } from '../../lib/appwrite';  // Importa la función de creación de usuario
 
 const SignUp = () => {
   const [form, setForm] = useState({
-    username: '',
-    email: '',
-    password: ''
+    email: '',  // Cambiado a "email"
+    usuario: '',
+    contraseña: '',
   });
 
-  const [isSubmitting, setSubmitting] = useState(false);
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submit = async () => {
-    if (form.username === "" || form.email === "" || form.password === "") {
-      Alert.alert("Error", "Please fill in all fields");
+  const handleRegister = async () => {
+    const { email, usuario, contraseña } = form;
+
+    if (!email || !usuario || !contraseña) {
+      Alert.alert("Error", "Todos los campos son obligatorios.");
       return;
     }
 
-    setSubmitting(true);
+    setIsSubmitting(true);
+
     try {
-      const newUser = await createUser(form.email, form.password, form.username);
+      // Pasar solo los campos necesarios a la función createUser
+      const newUser = await createUser(email, contraseña, usuario);
+
       if (newUser) {
-        router.replace("/home");
+        Alert.alert("Registro Exitoso", "El usuario ha sido registrado correctamente.");
+        router.replace('/sign-in');  // Redirigir al home tras registro exitoso
       }
     } catch (error) {
-      console.error('Error during signUp:', error.message);
-      Alert.alert("Error", error.message);
+      console.error('Error durante el registro:', error.message);
+      Alert.alert("Error", error.message);  // Muestra el error si algo sale mal
     } finally {
-      setSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <SafeAreaView className="bg-primary h-full">
-      <ScrollView>
-        <View className="w-full justify-center min-h-[85vh] px-4 my-6">
-          <Image 
-            source={images.logo}
-            resizeMode='contain'
-            className="w-[115px] h-[35px]" 
-          />
-          
-          <Text className="text-2xl text-white text-semibold mt-10 font-psemibold">
-            Sign up to Aora Adso
+    <ImageBackground source={require('../../assets/wall_page-0001.jpg')} style={styles.background}>
+      <View style={styles.container}>
+        <Text style={styles.title}>Registrarse</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Correo Electrónico"
+          value={form.email}
+          onChangeText={(value) => setForm({ ...form, email: value })}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Usuario"
+          value={form.usuario}
+          onChangeText={(value) => setForm({ ...form, usuario: value })}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Contraseña"
+          value={form.contraseña}
+          secureTextEntry
+          onChangeText={(value) => setForm({ ...form, contraseña: value })}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={isSubmitting}>
+          <Text style={styles.buttonText}>
+            {isSubmitting ? 'Registrando...' : 'Registrarse'}
           </Text>
-
-          <FormField 
-            title="Username"
-            value={form.username}
-            handleChangeText={(e) => setForm({ ...form, username: e })}
-            otherStyles="mt-10"
-            inputStyle={{ color: 'white', backgroundColor: '#f0f0f0' }}
-          />
-          
-          <FormField 
-            title="Email"
-            value={form.email}
-            handleChangeText={(e) => setForm({ ...form, email: e })}
-            otherStyles="mt-7"
-            keyboardType="email-address"
-            inputStyle={{ color: 'white', backgroundColor: '#f0f0f0' }}
-          />
-          
-          <FormField 
-            title="Password"
-            value={form.password}
-            handleChangeText={(e) => setForm({ ...form, password: e })}
-            otherStyles="mt-7"
-            secureTextEntry
-            inputStyle={{ color: 'white', backgroundColor: '#f0f0f0' }}
-          />
-          
-          <CustomButton 
-            title="Sign Up"
-            handlePress={submit}
-            containerStyles="mt-7"
-            isLoading={isSubmitting}
-          />
-
-          <View className="justify-center pt-5 flex-row gap-2">
-            <Text className="text-lg text-gray-100 font-pregular">
-              Have an account already?
-            </Text>
-            <Link href="/sign-in" className="text-lg font-psemibold text-secondary">
-              Sign In
-            </Link>
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push('/sign-in')}>
+          <Text style={styles.link}>¿Ya tienes cuenta? Inicia sesión</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    width: '100%',
+    padding: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Fondo blanco translúcido para mejorar la legibilidad
+    borderRadius: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+    color: '#333',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 12,
+    marginBottom: 16,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+  },
+  button: {
+    backgroundColor: '#D2A857',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  link: {
+    marginTop: 15,
+    textAlign: 'center',
+    color: '#D2A857',
+    fontSize: 16,
+  },
+});
 
 export default SignUp;
