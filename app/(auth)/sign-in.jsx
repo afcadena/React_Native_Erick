@@ -1,36 +1,19 @@
 import { View, Text, Image, ScrollView, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from "../../constants";
 import FormField from '../../components/FormField';
 import CustomButton from "../../components/CustomButton";
-import { Link, router } from 'expo-router';
-import { signIn, checkSession } from '../../lib/appwrite';
+import { Link, useRouter } from 'expo-router';
+import { signIn } from '../../lib/appwrite';
 
 const SignIn = () => {
   const [form, setForm] = useState({
     email: '',
     password: ''
   });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Verificar si ya hay una sesión activa al iniciar el componente
-  useEffect(() => {
-    const verifySession = async () => {
-      try {
-        const hasSession = await checkSession();
-        console.log('Has session:', hasSession); // Verificar si hay una sesión activa
-        if (hasSession) {
-          console.log('Session already active, redirecting to /home');
-          router.replace('/home'); // Redirigir si ya hay una sesión activa
-        }
-      } catch (error) {
-        console.error('Error checking session:', error.message);
-      }
-    };
-    verifySession();
-  }, []);
+  const router = useRouter();
 
   const submit = async () => {
     if (!form.email || !form.password) {
@@ -40,14 +23,10 @@ const SignIn = () => {
 
     setIsSubmitting(true);
     try {
-      console.log('Attempting to sign in with email:', form.email);
-      
       const session = await signIn(form.email, form.password);
-      console.log('Session created:', session);
-
-      // Redirigir a la página de inicio después de iniciar sesión
-      router.replace('/home');
-      console.log('Redirecting to /home');
+      if (session) {
+        router.replace('/home'); // Redirigir solo si las credenciales son correctas
+      }
     } catch (error) {
       console.error('Error during signIn:', error.message);
       Alert.alert('Error', error.message);
@@ -69,6 +48,7 @@ const SignIn = () => {
             handleChangeText={(e) => setForm({ ...form, email: e })}
             otherStyles="mt-7"
             keyboardType="email-address"
+            inputStyle={{ color: 'white', backgroundColor: '#f0f0f0' }}
           />
           <FormField 
             title="Password"
@@ -76,6 +56,7 @@ const SignIn = () => {
             handleChangeText={(e) => setForm({ ...form, password: e })}
             otherStyles="mt-7"
             secureTextEntry
+            inputStyle={{ color: 'white', backgroundColor: '#f0f0f0' }}
           />
           <CustomButton 
             title="Sign in"

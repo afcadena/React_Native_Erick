@@ -1,12 +1,10 @@
 import { View, Text, Alert, Image, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 import { images } from "../../constants";
-
 import FormField from '../../components/FormField';
 import CustomButton from "../../components/CustomButton";
-import { Link, useRouter } from 'expo-router';  // Asegurándote de importar useRouter
+import { Link, useRouter } from 'expo-router';
 import { createUser } from '../../lib/appwrite';
 
 const SignUp = () => {
@@ -17,26 +15,22 @@ const SignUp = () => {
   });
 
   const [isSubmitting, setSubmitting] = useState(false);
-  const router = useRouter();  // Asegurándote de inicializar el router correctamente
+  const router = useRouter();
 
   const submit = async () => {
     if (form.username === "" || form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill in all fields");
-      return;  // Agregando return para detener la ejecución si hay campos vacíos
+      return;
     }
 
     setSubmitting(true);
     try {
-      // Creando el usuario con los campos permitidos (sin avatarUrl)
-      const result = await createUser(form.email, form.password, form.username);
-      
-      // Aquí podrías setear el usuario y redirigir a /home si todo va bien
-      setUser(result);
-      setIsLogged(true);
-
-      // Redirigir al usuario al home
-      router.replace("/home");
+      const newUser = await createUser(form.email, form.password, form.username);
+      if (newUser) {
+        router.replace("/home");
+      }
     } catch (error) {
+      console.error('Error during signUp:', error.message);
       Alert.alert("Error", error.message);
     } finally {
       setSubmitting(false);
@@ -44,7 +38,7 @@ const SignUp = () => {
   };
 
   return (
-    <SafeAreaView className="bg-primary h-full ">
+    <SafeAreaView className="bg-primary h-full">
       <ScrollView>
         <View className="w-full justify-center min-h-[85vh] px-4 my-6">
           <Image 
@@ -62,6 +56,7 @@ const SignUp = () => {
             value={form.username}
             handleChangeText={(e) => setForm({ ...form, username: e })}
             otherStyles="mt-10"
+            inputStyle={{ color: 'white', backgroundColor: '#f0f0f0' }}
           />
           
           <FormField 
@@ -69,14 +64,17 @@ const SignUp = () => {
             value={form.email}
             handleChangeText={(e) => setForm({ ...form, email: e })}
             otherStyles="mt-7"
-            keyboardType="email-address"  // Corregir typo en keyboardType
+            keyboardType="email-address"
+            inputStyle={{ color: 'white', backgroundColor: '#f0f0f0' }}
           />
           
           <FormField 
             title="Password"
             value={form.password}
             handleChangeText={(e) => setForm({ ...form, password: e })}
-            otherStyles="mt-7"  
+            otherStyles="mt-7"
+            secureTextEntry
+            inputStyle={{ color: 'white', backgroundColor: '#f0f0f0' }}
           />
           
           <CustomButton 
