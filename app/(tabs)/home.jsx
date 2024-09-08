@@ -1,86 +1,148 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, SafeAreaView, Animated, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
+
+const categories = [
+  { name: "Cuadernos", image: require('../../assets/images/cuaderno.jpg') },
+  { name: "Arte", image: require('../../assets/images/Arte.jpg') },
+  { name: "Accesorios", image: require('../../assets/images/accesorios.jpg') },
+  // Agrega más categorías según sea necesario
+];
+
+const newProducts = [
+  { name: "Cuaderno 2024", image: require('../../assets/images/cuaderno.jpg'), price: "$25.00" },
+  { name: "Set de Pinturas", image: require('../../assets/images/Arte.jpg'), price: "$40.00" },
+  { name: "Agenda 2024", image: require('../../assets/images/accesorios.jpg'), price: "$30.00" },
+  // Agrega más productos nuevos según sea necesario
+];
 
 const Home = () => {
   const router = useRouter();
+  const [headerVisible, setHeaderVisible] = React.useState(true);
+  const scrollY = React.useRef(new Animated.Value(0)).current;
+
+  const handleScroll = Animated.event(
+    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+    {
+      useNativeDriver: false,
+      listener: (event) => {
+        const currentOffset = event.nativeEvent.contentOffset.y;
+        setHeaderVisible(currentOffset < 100);
+      },
+    }
+  );
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      
-      {/* Home Section */}
-      <ImageBackground source={require('../../assets/wall_page-0001.jpg')} style={styles.home}>
-        <View style={styles.content}>
-          <Text style={styles.title}>Bienvenido Cliente</Text>
-          <Text style={styles.subtitle}>Gran variedad de materiales</Text>
-          <Text style={styles.paragraph}>
-            Somos tu destino para materiales de papelería de calidad. Ofrecemos una amplia gama de productos, atención personalizada y un compromiso con la sostenibilidad.
-          </Text>
-          <TouchableOpacity style={styles.btn} onPress={() => router.push('#products')}>
-            <Text style={styles.btnText}>Ver ahora</Text>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
+    <SafeAreaView style={styles.safeArea}>
+      {/* Oculta la barra de estado */}
+      <StatusBar hidden={true} />
+      <Animated.View style={[styles.header, { transform: [{ translateY: headerVisible ? 0 : -100 }] }]}>
+        <Text style={styles.logo}>Cybercopias</Text>
+        {/* Eliminar el botón de iniciar sesión */}
+      </Animated.View>
 
-      {/* Products Section */}
-      <View style={styles.products}>
-        <Text style={styles.heading}>Lista <Text style={styles.span}>Productos</Text></Text>
-
-        <View style={styles.productContainer}>
-          {/* Producto Individual */}
-          <View style={styles.productBox}>
-            <Image source={require('../../assets/prod-1.png')} style={styles.productImage} />
-            <Text style={styles.productTitle}>Cuaderno tapa dura</Text>
-            <Text style={styles.productPrice}>$12.99</Text>
-            <TouchableOpacity style={styles.cartBtn}>
-              <Text style={styles.cartBtnText}>Individual</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Repetir para otros productos */}
-          <View style={styles.productBox}>
-            <Image source={require('../../assets/prod-2.png')} style={styles.productImage} />
-            <Text style={styles.productTitle}>Lápiz H2</Text>
-            <Text style={styles.productPrice}>$12.99</Text>
-            <TouchableOpacity style={styles.cartBtn}>
-              <Text style={styles.cartBtnText}>Individual</Text>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
+        {/* Home Section */}
+        <View style={styles.home}>
+          <Image source={require('../../assets/images/escritura.jpg')} style={styles.backgroundImage} />
+          <View style={styles.content}>
+            <Text style={styles.title}>Bienvenido Cliente</Text>
+            <Text style={styles.subtitle}>Gran variedad de materiales</Text>
+            <Text style={styles.paragraph}>
+              Somos tu destino para materiales de papelería de calidad. Ofrecemos una amplia gama de productos, atención personalizada y un compromiso con la sostenibilidad.
+            </Text>
+            <TouchableOpacity style={styles.btn} onPress={() => router.push('#products')}>
+              <Text style={styles.btnText}>Ver ahora</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </View>
 
-      {/* About Section */}
-      <View style={styles.about}>
-        <Text style={styles.heading}>Sobre <Text style={styles.span}>Nosotros</Text></Text>
-        <Text style={styles.paragraph}>
-          Nuestra papelería es la elección principal cuando se trata de comprar materiales de papelería. Nos enorgullece ofrecer una amplia gama de productos de alta calidad a precios competitivos...
-        </Text>
-      </View>
+        {/* Categories Section */}
+        <View style={styles.categoriesSection}>
+          <Text style={styles.heading}>Nuestras Categorías</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {categories.map((category, index) => (
+              <TouchableOpacity key={index} onPress={() => router.push(`/category/${category.name.toLowerCase()}`)}>
+                <View style={styles.categoryCard}>
+                  <Image source={category.image} style={styles.categoryImage} />
+                  <Text style={styles.categoryName}>{category.name}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
 
-      {/* Footer Section */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>© 2024 Cyber Copias. Todos los derechos reservados.</Text>
-      </View>
-    </ScrollView>
+        {/* Featured Products Section */}
+        <View style={styles.featuredCategory}>
+          <View style={styles.featuredHeader}>
+            <Text style={styles.featuredTitle}>TECNOLOGÍA</Text>
+            <TouchableOpacity onPress={() => router.push('/technology')}>
+              <Text style={styles.featuredLink}>Ver todo</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {[1, 2, 3, 4, 5].map((_, index) => (
+              <View key={index} style={styles.productCard}>
+                <View style={styles.productImagePlaceholder}></View>
+                <Text style={styles.productTitle}>Producto {index + 1}</Text>
+                <Text style={styles.productPrice}>$199.900</Text>
+                <TouchableOpacity style={styles.addButton} onPress={() => console.log('Agregar al carrito')}>
+                  <Text style={styles.addButtonText}>Agregar al carrito</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* New Products Section */}
+        <View style={styles.newProductsSection}>
+          <Text style={styles.heading}>Novedades</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {newProducts.map((product, index) => (
+              <View key={index} style={styles.productCard}>
+                <Image source={product.image} style={styles.productImage} />
+                <Text style={styles.productTitle}>{product.name}</Text>
+                <Text style={styles.productPrice}>{product.price}</Text>
+                <TouchableOpacity style={styles.addButton} onPress={() => console.log('Agregar al carrito')}>
+                  <Text style={styles.addButtonText}>Agregar al carrito</Text>
+                </TouchableOpacity>
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: '#fff',
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  scrollContainer: {
+    padding: 16,
   },
   header: {
-    padding: 20,
-    backgroundColor: '#D2A857',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center', // Centra el contenido horizontalmente
     alignItems: 'center',
+    marginBottom: 20,
+    backgroundColor: '#ffffff',
+    paddingVertical: 16,
+    paddingHorizontal: 8,
+    position: 'absolute',
+    width: '100%',
+    zIndex: 10,
   },
   logo: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#111418',
   },
   home: {
     width: '100%',
@@ -88,10 +150,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  backgroundImage: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
   content: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     padding: 20,
     borderRadius: 10,
+    marginTop: 50, // Añadir margen superior para bajar el texto
   },
   title: {
     fontSize: 32,
@@ -109,7 +178,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   btn: {
-    backgroundColor: '#D2A857',
+    backgroundColor: '#007bff', // Cambiar el color del botón a azul
     padding: 10,
     borderRadius: 5,
   },
@@ -117,62 +186,88 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
-  products: {
-    padding: 20,
+  categoriesSection: {
+    marginBottom: 20,
   },
   heading: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#111418',
   },
-  span: {
-    color: '#D2A857',
+  categoryCard: {
+    width: 120,
+    marginRight: 10,
+    alignItems: 'center',
   },
-  productContainer: {
+  categoryImage: {
+    width: '100%',
+    height: 120,
+    borderRadius: 8,
+  },
+  categoryName: {
+    fontSize: 16,
+    fontWeight: 'medium',
+    color: '#111418',
+    marginTop: 8,
+  },
+  featuredCategory: {
+    marginBottom: 20,
+  },
+  featuredHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  productBox: {
-    width: '48%',
-    backgroundColor: '#f5f5f5',
-    padding: 10,
-    borderRadius: 10,
     alignItems: 'center',
-  },
-  productImage: {
-    width: 100,
-    height: 100,
     marginBottom: 10,
   },
-  productTitle: {
-    fontSize: 18,
+  featuredTitle: {
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 5,
+    color: '#111418',
+  },
+  featuredLink: {
+    fontSize: 16,
+    color: '#007bff',
+  },
+  productCard: {
+    width: 150,
+    marginRight: 10,
+    alignItems: 'center',
+    borderRadius: 8,
+    backgroundColor: '#f5f5f5',
+    padding: 10,
+  },
+  productImagePlaceholder: {
+    width: '100%',
+    height: 100,
+    backgroundColor: '#e0e0e0',
+    borderRadius: 8,
+  },
+  productImage: {
+    width: '100%',
+    height: 100,
+    borderRadius: 8,
+  },
+  productTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#111418',
+    marginTop: 8,
   },
   productPrice: {
-    fontSize: 16,
-    color: '#888',
+    fontSize: 14,
+    color: '#111418',
+    marginTop: 4,
   },
-  cartBtn: {
-    marginTop: 10,
-    backgroundColor: '#D2A857',
+  addButton: {
+    backgroundColor: '#007bff',
     padding: 10,
     borderRadius: 5,
+    marginTop: 10,
   },
-  cartBtnText: {
+  addButtonText: {
     color: '#fff',
-  },
-  about: {
-    padding: 20,
-  },
-  footer: {
-    padding: 20,
-    backgroundColor: '#333',
-    alignItems: 'center',
-  },
-  footerText: {
-    color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
   },
 });
 
