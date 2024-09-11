@@ -51,7 +51,7 @@ const SignIn = () => {
 
       <View style={styles.container}>
         <Image
-          source={require('../../assets/images/accesorios.jpg')} // Reemplaza con la ruta a tu imagen
+          source={require('../../assets/images/escritura.jpg')} // Reemplaza con la ruta a tu imagen
           style={styles.image}
         />
         <Text style={styles.title}>Bienvenido de vuelta</Text>

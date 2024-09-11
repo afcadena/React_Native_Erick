@@ -52,7 +52,7 @@ const SignUp = () => {
 
       <View style={styles.container}>
         <Image
-          source={require('../../assets/images/accesorios.jpg')} // Reemplaza con la ruta a tu imagen
+          source={require('../../assets/images/blog_papelarte_abril.jpeg')} // Reemplaza con la ruta a tu imagen
           style={styles.image}
         />
         <Text style={styles.title}>Bienvenido a CyberCopias</Text>

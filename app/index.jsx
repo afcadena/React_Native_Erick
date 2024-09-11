@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Animated } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Animated, ImageBackground } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 
@@ -8,6 +8,13 @@ const categories = [
   { name: "Arte", image: require('../assets/images/Arte.jpg') },
   { name: "Accesorios", image: require('../assets/images/accesorios.jpg') },
   // Agrega más categorías según sea necesario
+];
+
+const specialCategories = [
+  { name: "Papel", image: require('../assets/images/blog_papelarte_abril.jpeg') },
+  { name: "Coleccionables", image: require('../assets/images/coleccionables.jpg') },
+  { name: "Escritura", image: require('../assets/images/escritura.jpg') },
+  // Agrega más categorías especiales según sea necesario
 ];
 
 export default function HomePage() {
@@ -28,7 +35,6 @@ export default function HomePage() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      {/* Oculta la barra de estado */}
       <StatusBar hidden={true} />
       <Animated.View style={[styles.header, { transform: [{ translateY: headerVisible ? 0 : -100 }] }]}>
         <Text style={styles.logo}>Cybercopias</Text>
@@ -42,17 +48,15 @@ export default function HomePage() {
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
-        {/* Hero Section */}
-        <View style={styles.heroSection}>
-          <Text style={styles.heroText}>Ofertas Exclusivas</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.carousel}>
-            {[1, 2, 3].map((_, index) => (
-              <View key={index} style={styles.carouselItem}>
-                <Text style={styles.carouselText}>Oferta {index + 1}</Text>
-              </View>
-            ))}
-          </ScrollView>
-        </View>
+        {/* Imagen de fondo "New Arrivals" */}
+        <ImageBackground source={require('../assets/images/escritura.jpg')} style={styles.banner}>
+          <View style={styles.overlay}>
+            <Text style={styles.bannerTitle}>Nuevas llegadas</Text>
+            <Text style={styles.bannerSubtitle}>
+            Compre lo último en papelería de nuestras marcas favoritas.
+            </Text>
+          </View>
+        </ImageBackground>
 
         {/* Categorías */}
         <View style={styles.categoriesSection}>
@@ -69,28 +73,19 @@ export default function HomePage() {
           </ScrollView>
         </View>
 
-        {/* Categoría Destacada */}
-        <View style={styles.featuredCategory}>
-          <View style={styles.featuredHeader}>
-            <Text style={styles.featuredTitle}>TECNOLOGÍA</Text>
-            <TouchableOpacity onPress={() => router.push('/technology')}>
-              <Text style={styles.featuredLink}>Ver todo</Text>
-            </TouchableOpacity>
-          </View>
+        {/* Nuevas Categorías */}
+        <View style={styles.specialCategoriesSection}>
+          <Text style={styles.heading}>Nuevas Categorías</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {[1, 2, 3, 4, 5].map((_, index) => (
-              <View key={index} style={styles.productCard}>
-                <View style={styles.productImagePlaceholder}></View>
-                <Text style={styles.productTitle}>Producto {index + 1}</Text>
-                <Text style={styles.productPrice}>$199.900</Text>
-                <TouchableOpacity style={styles.addButton} onPress={() => console.log('Agregar al carrito')}>
-                  <Text style={styles.addButtonText}>Agregar al carrito</Text>
-                </TouchableOpacity>
+            {specialCategories.map((category, index) => (
+              <View key={index} style={styles.specialCategoryCard}>
+                <Image source={category.image} style={styles.specialCategoryImage} />
+                <Text style={styles.specialCategoryName}>{category.name}</Text>
               </View>
             ))}
           </ScrollView>
         </View>
-        
+
         {/* Footer */}
         <View style={styles.footer}>
           <View style={styles.socialLinks}>
@@ -106,7 +101,6 @@ export default function HomePage() {
           </View>
           <Text style={styles.footerText}>@2024 Cybercopias. Todos los Derechos Reservados</Text>
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -126,7 +120,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     backgroundColor: '#ffffff',
-    paddingVertical: 16, // Ajusta este valor para mover el header hacia abajo
+    paddingVertical: 16,
     paddingHorizontal: 8,
     position: 'absolute',
     width: '100%',
@@ -142,44 +136,39 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
   },
   signInButtonText: {
     fontSize: 16,
     color: '#ffffff',
     fontWeight: 'bold',
   },
-  heroSection: {
-    marginBottom: 20,
-    marginTop: 80, // Ajusta esto si es necesario para que el contenido no se superponga con el header
-  },
-  heroText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#111418',
-  },
-  carousel: {
-    flexDirection: 'row',
-  },
-  carouselItem: {
-    width: 300,
-    height: 150,
-    backgroundColor: '#ccc',
-    marginRight: 10,
+  banner: {
+    width: '100%',
+    height: 350, // Aumenta la altura del banner
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    marginBottom: 10, // Reduce el espacio debajo del banner
   },
-  carouselText: {
-    fontSize: 20,
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Oscurece un poco el fondo para el texto
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bannerTitle: {
+    color: '#fff',
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
+  bannerSubtitle: {
+    color: '#fff',
+    fontSize: 16,
+    marginTop: 10,
   },
   categoriesSection: {
     marginBottom: 20,
+    marginTop: 10, // Reduce el espacio superior debajo del banner
   },
   heading: {
     fontSize: 20,
@@ -199,63 +188,26 @@ const styles = StyleSheet.create({
   },
   categoryName: {
     fontSize: 16,
-    fontWeight: 'medium',
     color: '#111418',
     marginTop: 8,
   },
-  featuredCategory: {
+  specialCategoriesSection: {
     marginBottom: 20,
   },
-  featuredHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  featuredTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#111418',
-  },
-  featuredLink: {
-    fontSize: 16,
-    color: '#007bff',
-  },
-  productCard: {
+  specialCategoryCard: {
     width: 150,
     marginRight: 10,
     alignItems: 'center',
-    borderRadius: 8,
-    backgroundColor: '#f5f5f5',
-    padding: 10,
   },
-  productImagePlaceholder: {
+  specialCategoryImage: {
     width: '100%',
     height: 100,
-    backgroundColor: '#e0e0e0',
     borderRadius: 8,
   },
-  productTitle: {
+  specialCategoryName: {
     fontSize: 16,
-    fontWeight: 'bold',
     color: '#111418',
     marginTop: 8,
-  },
-  productPrice: {
-    fontSize: 14,
-    color: '#111418',
-    marginTop: 4,
-  },
-  addButton: {
-    marginTop: 10,
-    backgroundColor: '#007bff',
-    padding: 10,
-    borderRadius: 8,
-  },
-  addButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   footer: {
     marginTop: 20,
@@ -270,11 +222,11 @@ const styles = StyleSheet.create({
   },
   socialIcon: {
     fontSize: 16,
-    color: '#637588',
     marginHorizontal: 10,
+    color: '#007bff',
   },
   footerText: {
     fontSize: 14,
-    color: '#637588',
+    color: '#111418',
   },
 });

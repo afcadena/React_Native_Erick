@@ -2,6 +2,13 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, SafeAreaView, Animated, StatusBar } from 'react-native';
 import { useRouter } from 'expo-router';
 
+const specialCategories = [
+  { name: "Papel", image: require('../../assets/images/blog_papelarte_abril.jpeg') },
+  { name: "Coleccionables", image: require('../../assets/images/coleccionables.jpg') },
+  { name: "Escritura", image: require('../../assets/images/escritura.jpg') },
+  // Agrega más categorías especiales según sea necesario
+];
+
 const categories = [
   { name: "Cuadernos", image: require('../../assets/images/cuaderno.jpg') },
   { name: "Arte", image: require('../../assets/images/Arte.jpg') },
@@ -55,10 +62,25 @@ const Home = () => {
             <Text style={styles.paragraph}>
               Somos tu destino para materiales de papelería de calidad. Ofrecemos una amplia gama de productos, atención personalizada y un compromiso con la sostenibilidad.
             </Text>
-            <TouchableOpacity style={styles.btn} onPress={() => router.push('#products')}>
+            <TouchableOpacity style={styles.btn} onPress={() => router.push('/profile')}>
               <Text style={styles.btnText}>Ver ahora</Text>
             </TouchableOpacity>
           </View>
+        </View>
+
+        {/* Special Categories Section */}
+        <View style={styles.specialCategoriesSection}>
+          <Text style={styles.heading}>Categorías Especiales</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {specialCategories.map((category, index) => (
+              <TouchableOpacity key={index} onPress={() => router.push(`/category/${category.name.toLowerCase()}`)}>
+                <View style={styles.categoryCard}>
+                  <Image source={category.image} style={styles.categoryImage} />
+                  <Text style={styles.categoryName}>{category.name}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
 
         {/* Categories Section */}
@@ -72,28 +94,6 @@ const Home = () => {
                   <Text style={styles.categoryName}>{category.name}</Text>
                 </View>
               </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-
-        {/* Featured Products Section */}
-        <View style={styles.featuredCategory}>
-          <View style={styles.featuredHeader}>
-            <Text style={styles.featuredTitle}>TECNOLOGÍA</Text>
-            <TouchableOpacity onPress={() => router.push('/technology')}>
-              <Text style={styles.featuredLink}>Ver todo</Text>
-            </TouchableOpacity>
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {[1, 2, 3, 4, 5].map((_, index) => (
-              <View key={index} style={styles.productCard}>
-                <View style={styles.productImagePlaceholder}></View>
-                <Text style={styles.productTitle}>Producto {index + 1}</Text>
-                <Text style={styles.productPrice}>$199.900</Text>
-                <TouchableOpacity style={styles.addButton} onPress={() => console.log('Agregar al carrito')}>
-                  <Text style={styles.addButtonText}>Agregar al carrito</Text>
-                </TouchableOpacity>
-              </View>
             ))}
           </ScrollView>
         </View>
@@ -186,6 +186,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+  specialCategoriesSection: {
+    marginBottom: 20,
+  },
   categoriesSection: {
     marginBottom: 20,
   },
@@ -211,24 +214,6 @@ const styles = StyleSheet.create({
     color: '#111418',
     marginTop: 8,
   },
-  featuredCategory: {
-    marginBottom: 20,
-  },
-  featuredHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  featuredTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#111418',
-  },
-  featuredLink: {
-    fontSize: 16,
-    color: '#007bff',
-  },
   productCard: {
     width: 150,
     marginRight: 10,
@@ -236,12 +221,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#f5f5f5',
     padding: 10,
-  },
-  productImagePlaceholder: {
-    width: '100%',
-    height: 100,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 8,
   },
   productImage: {
     width: '100%',
